@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<h1>Численность населения по регионам РФ</h1>
+<form method="post" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label for="datafile" class="form-label">Выберите CSV-файл</label>
+        <input type="file" class="form-control" name="datafile" required>
+    </div>
+    <div class="mb-3">
+        <label for="period" class="form-label">Период скользящей средней (лет)</label>
+        <input type="number" class="form-control" name="period" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Загрузить и построить</button>
+</form>
+
+{% if chart_url %}
+<hr>
+<h2>График численности населения</h2>
+<img src="{{ url_for('static', filename='chart.png') }}" class="img-fluid" alt="График">
+<p><strong>Максимальное снижение:</strong> {{ result.worst }}</p>
+<p><strong>Минимальное снижение:</strong> {{ result.least }}</p>
+{% endif %}
+{% endblock %}
