@@ -29,7 +29,7 @@ def java():
     return render_template('java.html')
 
 
-@app.route('/alice')
+@app.route('/alice') #TEST
 def alice():
     return render_template('alice.html')
 
