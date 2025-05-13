@@ -45,13 +45,13 @@ def alice():
                 error_message = "Need CSV!"
             else:
                 try:
-                    df = pd.read_csv(file)
+                    daf = pd.read_csv(file)
 
                     expected_columns = ['Year', 'VVP', 'VNP']
-                    if not all(col in df.columns for col in expected_columns):
+                    if not all(col in daf.columns for col in expected_columns):
                         error_message = f"CSV trebuet {', '.join(expected_columns)}"
                     else:
-                        table_data = df[expected_columns].to_dict(orient='records')
+                        table_data = daf[expected_columns].to_dict(orient='records')
                 except Exception as e:
                     error_message = f"ASHIBKA {e}"
 
