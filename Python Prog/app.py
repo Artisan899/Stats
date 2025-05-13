@@ -29,10 +29,33 @@ def java():
     return render_template('java.html')
 
 
-@app.route('/alice') #TEST
+@app.route('/alice')
 def alice():
-    return render_template('alice.html')
+    table_data = None
+    error_message = None
 
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            error_message = "Not found"
+        else:
+            file = request.files['datafile']
+            if file.filename == '':
+                error_message = "Not chosen"
+            elif not file.filename.endswith('.csv'):
+                error_message = "Need CSV!"
+            else:
+                try:
+                    df = pd.read_csv(file)
+
+                    expected_columns = ['Year', 'VVP', 'VNP']
+                    if not all(col in df.columns for col in expected_columns):
+                        error_message = f"CSV trebuet {', '.join(expected_columns)}"
+                    else:
+                        table_data = df[expected_columns].to_dict(orient='records')
+                except Exception as e:
+                    error_message = f"ASHIBKA {e}"
+
+    return render_template('alice.html', table_data=table_data, error_message=error_message)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)

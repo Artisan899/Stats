@@ -1,14 +1,48 @@
-{% extends 'base.html'  %}
+{% extends 'base.html' %}
 
 {% block title %}
-<title>Алиса</title>
+<title>ВВП и ВНП</title>
 {% endblock %}
 
-
 {% block body %}
-<h1>Алиса</h1>
+<h1>ВВП и ВНП</h1>
+
+<!-- Форма загрузки -->
+<form action="{{ url_for('index') }}" method="post" enctype="multipart/form-data">
+    <label for="file">Загрузите CSV файл:</label>
+    <input type="file" name="datafile" id="file" accept=".csv" required>
+    <button type="submit">Загрузить</button>
+</form>
+
+<!-- Ошибка, если есть -->
+{% if error_message %}
+<p style="color: red;">{{ error_message }}</p>
+{% endif %}
+
+<!-- Таблица -->
+{% if table_data %}
+<h2>Данные из CSV:</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Год</th>
+            <th>ВВП</th>
+            <th>ВНП</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in table_data %}
+        <tr>
+            <td>{{ row['Год'] }}</td>
+            <td>{{ row['ВВП'] }}</td>
+            <td>{{ row['ВНП'] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
 {% endblock %}
 
 {% block stats %}
-<p>Статистика Алисы</p>
+<p>Статистика ВВП и ВНП</p>
 {% endblock %}
