@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 import pandas as pd
-from services.analyzer import PopulationAnalyzer
+from services.analyzer import PopulationAnalyzer, VVPAnalyzer
 from services.forecast import ForecastService, VVP_ForecastService
 from services.plotter import plot_population, plot_gdp_gnp
 
@@ -33,7 +33,8 @@ def java():
 def alice():
     table_data = None
     error_message = None
-    chart_url = None  # Добавлено для хранения пути к графику
+    chart_url = None
+    stats = None
 
     if request.method == 'POST':
         if 'datafile' not in request.files:
@@ -53,16 +54,16 @@ def alice():
                         error_message = f"CSV trebuet {', '.join(expected_columns)}"
                     else:
                         table_data = daf[expected_columns].to_dict(orient='records')
+                        stats = VVPAnalyzer.calculate_growth_decline(daf)
                         period = 15
                         df_forecast = VVP_ForecastService.forecast(daf, period)
                         original_years = daf['Year'].unique().tolist()
-                        # Генерация графика и получение пути к нему
                         chart_url = plot_gdp_gnp(df_forecast, original_years)
 
                 except Exception as e:
                     error_message = f"ASHIBKA {e}"
 
-    return render_template('alice.html', table_data=table_data, error_message=error_message, chart_url=chart_url)
+    return render_template('alice.html', table_data=table_data, error_message=error_message, chart_url=chart_url, stats=stats)
 
 
 if __name__ == '__main__':

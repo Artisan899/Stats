@@ -49,8 +49,25 @@
 <img src="{{ url_for('static', filename=chart_url) }}" class="img-fluid" alt="График ВВП и ВНП">
 {% endif %}
 
+<!-- Статистика -->
+{% if stats %}
+<hr>
+<h2>Статистика ВВП и ВНП</h2>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Показатель</th>
+            <th>Значение</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>Макс. рост ВВП</td><td>{{ stats.max_vvp_growth }}% ({{ stats.max_vvp_growth_year }})</td></tr>
+        <tr><td>Макс. падение ВВП</td><td>{{ stats.max_vvp_decline }}% ({{ stats.max_vvp_decline_year }})</td></tr>
+        <tr><td>Макс. рост ВНП</td><td>{{ stats.max_vnp_growth }}% ({{ stats.max_vnp_growth_year }})</td></tr>
+        <tr><td>Макс. падение ВНП</td><td>{{ stats.max_vnp_decline }}% ({{ stats.max_vnp_decline_year }})</td></tr>
+    </tbody>
+</table>
+{% endif %}
+
 {% endblock %}
 
-{% block stats %}
-<p>Статистика ВВП и ВНП</p>
-{% endblock %}
