@@ -29,13 +29,13 @@ def java():
     return render_template('java.html')
 
 
-@app.route('/alice')
+@app.route('/alice',methods=['GET', 'POST'])
 def alice():
     table_data = None
     error_message = None
 
     if request.method == 'POST':
-        if 'file' not in request.files:
+        if 'datafile' not in request.files:
             error_message = "Not found"
         else:
             file = request.files['datafile']
