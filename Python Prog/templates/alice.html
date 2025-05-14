@@ -1,14 +1,73 @@
-{% extends 'base.html'  %}
+{% extends 'base.html' %}
 
 {% block title %}
-<title>Алиса</title>
+<title>ВВП и ВНП</title>
 {% endblock %}
-
 
 {% block body %}
-<h1>Алиса</h1>
+<h1>ВВП и ВНП</h1>
+
+<!-- Форма загрузки -->
+<form action="{{ url_for('alice') }}" method="post" enctype="multipart/form-data">
+    <label for="file">Загрузите CSV файл:</label>
+    <input type="file" name="datafile" id="file" accept=".csv" required>
+    <button type="submit">Загрузить</button>
+</form>
+
+<!-- Ошибка, если есть -->
+{% if error_message %}
+<p style="color: red;">{{ error_message }}</p>
+{% endif %}
+
+<!-- Таблица -->
+{% if table_data %}
+<h2>Данные из CSV:</h2>
+<table class="table table-striped table-bordered table-hover">
+    <thead class="thead-dark">
+        <tr>
+            <th>Год</th>
+            <th>ВВП</th>
+            <th>ВНП</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in table_data %}
+        <tr>
+            <td>{{ row['Year'] }}</td>
+            <td>{{ row['VVP'] }}</td>
+            <td>{{ row['VNP'] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+<!-- Отображение графика -->
+{% if chart_url %}
+<hr>
+<h2>График ВВП и ВНП</h2>
+<img src="{{ url_for('static', filename=chart_url) }}" class="img-fluid" alt="График ВВП и ВНП">
+{% endif %}
+
+<!-- Статистика -->
+{% if stats %}
+<hr>
+<h2>Статистика ВВП и ВНП</h2>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Показатель</th>
+            <th>Значение</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>Макс. рост ВВП</td><td>{{ stats.max_vvp_growth }}% ({{ stats.max_vvp_growth_year }})</td></tr>
+        <tr><td>Макс. падение ВВП</td><td>{{ stats.max_vvp_decline }}% ({{ stats.max_vvp_decline_year }})</td></tr>
+        <tr><td>Макс. рост ВНП</td><td>{{ stats.max_vnp_growth }}% ({{ stats.max_vnp_growth_year }})</td></tr>
+        <tr><td>Макс. падение ВНП</td><td>{{ stats.max_vnp_decline }}% ({{ stats.max_vnp_decline_year }})</td></tr>
+    </tbody>
+</table>
+{% endif %}
+
 {% endblock %}
 
-{% block stats %}
-<p>Статистика Алисы</p>
-{% endblock %}
