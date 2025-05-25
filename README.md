@@ -39,4 +39,8 @@
 	> ...
 
 **Пример работы:**
+	![пример](readme_static/primer1.jpg)
+
+ **Пример работы:**
+	![пример](readme_static/primer2.jpg)
   
