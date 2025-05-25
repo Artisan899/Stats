@@ -48,6 +48,7 @@ def index():
 
 
 @app.route('/java')
+#Testtesttest
 def java():
     return render_template('java.html')
 
