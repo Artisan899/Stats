@@ -1,8 +1,17 @@
 from flask import Flask, render_template, request
 import pandas as pd
-from services.analyzer import PopulationAnalyzer, VVPAnalyzer
-from services.forecast import ForecastService, VVP_ForecastService
-from services.plotter import plot_population, plot_gdp_gnp
+
+
+#Population
+from services.Population.analyzer import PopulationAnalyzer
+from services.Population.forecast import ForecastService
+from services.Population.plotter import PopulationPlotter
+
+#VVP
+from services.VVP.analyzer import  VVPAnalyzer
+from services.VVP.forecast import  VVP_ForecastService
+from services.VVP.plotter import  plot_gdp_gnp
+
 
 app = Flask(__name__)
 
@@ -10,19 +19,33 @@ app = Flask(__name__)
 def index():
     chart_url = None
     result = None
+    table_data = None
+
     if request.method == 'POST':
         file = request.files['datafile']
         period = int(request.form['period'])
         df = pd.read_csv(file, encoding='cp1251')
+
         analyzer = PopulationAnalyzer(df)
         worst, least = analyzer.min_max_decline()
+
+        worst = (worst[0], int(worst[1]))
+        least = (least[0], int(least[1]))
+
+
         forecast = ForecastService()
         df_forecast = forecast.forecast(df, period)
         original_years = df['Year'].unique().tolist()
-        chart_url = plot_population(df_forecast, original_years)
+        plotter = PopulationPlotter()
+        chart_url = plotter.plot(df_forecast, original_years)
+
 
         result = {'worst': worst, 'least': least}
-    return render_template('index.html', chart_url=chart_url, result=result)
+
+        table_data = df.to_dict(orient='records')
+
+    return render_template('index.html', chart_url=chart_url, result=result, table_data=table_data)
+
 
 @app.route('/java')
 def java():

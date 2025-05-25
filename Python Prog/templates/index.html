@@ -14,11 +14,40 @@
     <button type="submit" class="btn btn-primary">Загрузить и построить</button>
 </form>
 
-{% if chart_url %}
+{% if result %}
+    <hr>
+    <h2>График численности населения</h2>
+    <img src="{{ url_for('static', filename='chart.png') }}" class="img-fluid" alt="График">
+
+    <p>За выбранный период (15 лет) численность населения снизилась:</p>
+    <ul>
+        <li><strong>Максимально:</strong> в регионе <em>{{ result.worst[0] }}</em> — на {{ result.worst[1] | abs }} человек</li>
+        <li><strong>Минимально:</strong> в регионе <em>{{ result.least[0] }}</em> — на {{ result.least[1] | abs }} человек</li>
+
+    </ul>
+
+{% endif %}
+
+{% if table_data %}
 <hr>
-<h2>График численности населения</h2>
-<img src="{{ url_for('static', filename='chart.png') }}" class="img-fluid" alt="График">
-<p><strong>Максимальное снижение:</strong> {{ result.worst }}</p>
-<p><strong>Минимальное снижение:</strong> {{ result.least }}</p>
+<h2>Данные из файла</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Year</th>
+            <th>Region</th>
+            <th>Population</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in table_data %}
+        <tr>
+            <td>{{ row['Year'] }}</td>
+            <td>{{ row['Region'] }}</td>
+            <td>{{ row['Population'] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endif %}
 {% endblock %}
