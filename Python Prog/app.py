@@ -12,6 +12,11 @@ from services.VVP.analyzer import  VVPAnalyzer
 from services.VVP.forecast import  VVP_ForecastService
 from services.VVP.plotter import  plot_gdp_gnp
 
+#Mariges
+from services.МarriagesD.marriage_analyzer import MarriageDivorceAnalyzer
+from services.МarriagesD.marriage_forecast import MarriageDivorceForecast
+from services.МarriagesD.marriage_plotter import MarriageDivorcePlotter
+
 
 app = Flask(__name__)
 
@@ -47,10 +52,39 @@ def index():
     return render_template('index.html', chart_url=chart_url, result=result, table_data=table_data)
 
 
-@app.route('/java')
+@app.route('/java', methods=['GET', 'POST'])
 #Testtesttest
+
 def java():
-    return render_template('java.html')
+    chart_url = None
+    stats_result = None
+    table_data = None
+
+    if request.method == 'POST':
+        file = request.files['datafile']
+        period = int(request.form['period'])
+        df = pd.read_csv(file, encoding='cp1251')
+
+        analyzer = MarriageDivorceAnalyzer(df)
+        stats_result = analyzer.most_common_ages()
+
+        original_years = df['Year'].unique().tolist()
+        forecast_service = MarriageDivorceForecast()
+        df_forecast = forecast_service.forecast(df, period)
+        forecast_years = sorted(set(df_forecast['Year']) - set(original_years))
+
+        plotter = MarriageDivorcePlotter()
+        chart_url = plotter.plot_by_year(df_forecast, original_years, forecast_years)
+
+        table_data = df.to_dict(orient='records')
+
+    return render_template(
+        'java.html',
+        chart_url=chart_url,
+        result=stats_result,
+        table_data=table_data
+    )
+    
 
 
 @app.route('/alice', methods=['GET', 'POST'])

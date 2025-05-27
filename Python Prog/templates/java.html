@@ -1,15 +1,62 @@
-{% extends 'base.html'  %}
-
-{% block title %}
-<title>Исматов</title>
-{% endblock %}
-
+{% extends 'base.html' %}
 
 {% block body %}
-<h1>Исматов</h1>
-{% endblock %}
+<h1>Анализ браков и разводов в России</h1>
 
-{% block stats %}
-<p>Статистика Исматова</p>
-{% endblock %}
+<form method="post" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label for="datafile" class="form-label">Выберите CSV-файл</label>
+        <input type="file" class="form-control" name="datafile" required>
+    </div>
+    <div class="mb-3">
+        <label for="period" class="form-label">Сколько лет спрогнозировать (экстраполяция)</label>
+        <input type="number" class="form-control" name="period" required min="1" value="5">
+    </div>
+    <button type="submit" class="btn btn-primary">Загрузить и построить</button>
+</form>
 
+{% if chart_url %}
+<hr>
+<h2>График количества браков и разводов</h2>
+<img src="{{ url_for('static', filename=chart_url) }}" class="img-fluid" alt="График браков и разводов">
+<p><i>Пунктирная линия отображает прогнозируемые значения на следующие годы.</i></p>
+{% endif %}
+
+{% if result %}
+<hr>
+<h2>Частота браков и разводов по возрасту</h2>
+<ul>
+    <li><strong>Мужчины:</strong> чаще женились в <b>{{ result['Male']['marriage_age'] }}</b> лет, разводились в <b>{{ result['Male']['divorce_age'] }}</b> лет.</li>
+    <li><strong>Женщины:</strong> чаще выходили замуж в <b>{{ result['Female']['marriage_age'] }}</b> лет, разводились в <b>{{ result['Female']['divorce_age'] }}</b> лет.</li>
+</ul>
+{% endif %}
+
+{% if table_data %}
+<hr>
+<h2>Данные из загруженного файла</h2>
+<div style="max-height: 500px; overflow-y: auto;">
+    <table class="table table-striped table-bordered table-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>Год</th>
+                <th>Пол</th>
+                <th>Возраст</th>
+                <th>Браки</th>
+                <th>Разводы</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in table_data %}
+            <tr>
+                <td>{{ row['Year'] }}</td>
+                <td>{{ row['Gender'] }}</td>
+                <td>{{ row['Age'] }}</td>
+                <td>{{ row['Marriages'] }}</td>
+                <td>{{ row['Divorces'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endblock %}
